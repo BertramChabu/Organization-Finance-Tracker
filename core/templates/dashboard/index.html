@@ -1,0 +1,128 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <h2>Welcome, Bursar</h2>
+
+    <!-- Filter Form -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <select name="method" class="form-select">
+                <option value="">All Methods</option>
+                <option value="cash" {% if filter_method == 'cash' %}selected{% endif %}>Cash</option>
+                <option value="mpesa" {% if filter_method == 'mpesa' %}selected{% endif %}>M-Pesa</option>
+                <option value="equity" {% if filter_method == 'equity' %}selected{% endif %}>Equity Bank</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+    </form>
+
+    <!-- Export Buttons -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <!-- CSV Modal Trigger -->
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#csvModal">
+                Export CSV
+            </button>
+
+            <!-- CSV Modal -->
+            <div class="modal fade" id="csvModal" tabindex="-1" aria-labelledby="csvModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="get" action="{% url 'export_csv' %}">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="csvModalLabel">Export Filtered Data (CSV)</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="method" value="{{ filter_method }}">
+                                <input type="hidden" name="start_date" value="{{ start_date }}">
+                                <input type="hidden" name="end_date" value="{{ end_date }}">
+                                <p>Download filtered data as CSV.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-outline-primary">Download CSV</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Export -->
+        <div class="col-md-6">
+            <form method="get" action="">
+                <input type="hidden" name="method" value="{{ filter_method }}">
+                <input type="hidden" name="start_date" value="{{ start_date }}">
+                <input type="hidden" name="end_date" value="{{ end_date }}">
+                <button type="submit" class="btn btn-outline-danger">Export PDF</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-header">Total Payments</div>
+                <div class="card-body">
+                    <h5 class="card-title">KES {{ total_payments }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-header">Total Students</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ student_count }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning">
+                <div class="card-header">Pending Balances</div>
+                <div class="card-body">
+                    <h5 class="card-title">KES {{ pending_balances }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <h4 class="mb-3">Monthly Payment Trends</h4>
+    <canvas id="paymentChart" height="100"></canvas>
+
+    <!-- Chart Script -->
+    <script>
+        const ctx = document.getElementById('paymentChart').getContext('2d');
+        const paymentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_labels|safe }},
+                datasets: [{
+                    label: 'KES Received',
+                    data: {{ chart_data|safe }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+
+    <a href="/admin/" class="btn btn-secondary mt-4">Manage Data in Admin</a>
+</div>
+{% endblock %}
