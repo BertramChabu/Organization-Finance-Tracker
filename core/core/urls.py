@@ -16,12 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from dashboard.views import dashboard_view
+
 from .views import export_csv
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('api/', include('api.urls')),
-    path('', dashboard_view, name='dashboard' ),
+    path('', include('users.urls')),
     path('export/csv/', export_csv, name='export_csv'),
-    
+    path('api/users/', include('users.urls'))
 ]

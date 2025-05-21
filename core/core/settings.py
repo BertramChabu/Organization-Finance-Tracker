@@ -43,8 +43,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'payments',
     'transactions',
-]
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'parents',
 
+]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,6 +64,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.urls'
+
 
 TEMPLATES = [
     {
@@ -103,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+AUTH_USER_MODEL = 'users.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
