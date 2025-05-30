@@ -1,0 +1,16 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<h3>Record Payment</h3>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="adm_number" placeholder="Admission Number" required><br>
+    <input type="number" name="amount" placeholder="Amount" required><br>
+    <select name="method" required>
+        <option value="cash">Cash</option>
+        <option value="mpesa">Mpesa</option>
+        <option value="bank">Bank Transfer</option>
+    </select><br>
+    <input type="text" name="reference" placeholder="Reference (optional)"><br>
+    <button type="submit">Record Payment</button>
+</form>
+{% endblock %}

@@ -1,18 +1,13 @@
 from django.db import models
-from students.models import Student
-from parents.models import Parent
-# Create your models here.
+from core.students.models import Student
+
 class Payment(models.Model):
-    
-    Student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    parent = models.ForeignKey(Parent, on_delete=models.CASCADE, null=True, blank=True)
-
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    method =  models.CharField(max_length=20, blank=False, null=False)
+    date = models.DateTimeField(auto_now_add=True)
+    method = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('mpesa', 'Mpesa'), ('bank', 'Bank Transfer')])
     reference = models.CharField(max_length=100, blank=True, null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
+    received_by = models.CharField(max_length=100)  # Bursar name or user
 
     def __str__(self):
-        return f"{self.Student.firstName} + {self.Student.lastName} - {self.amount} via {self.method}"
-    
+        return f"{self.student} - {self.amount} on {self.date.date()}"
