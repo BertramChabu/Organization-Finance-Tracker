@@ -25,7 +25,7 @@ class Student(models.Model):
     first_name = models.CharField(max_length=60)
     last_name = models.CharField(max_length=60)
     grade = models.ForeignKey(Grade, on_delete=models.CASCADE, related_name='students')
-    parent = models.ForeignKey(Parent, on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
+    parent = models.OneToOneField(Parent, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} (Adm No: {self.adm_no})"
