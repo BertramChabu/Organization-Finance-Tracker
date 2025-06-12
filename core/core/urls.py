@@ -24,6 +24,6 @@ urlpatterns = [
     path('', include('users.urls')),
     path('export/csv/', export_csv, name='export_csv'),
     path('api/users/', include('users.urls')),
-    path('attendance/', include('attendance.urls')),
+    # path('attendance/', include('attendance.urls')),
 
 ]
