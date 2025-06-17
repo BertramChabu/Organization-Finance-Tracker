@@ -29,6 +29,7 @@ THIRD_PARTY_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'django_filters',
+    'celery',
 ]
 
 LOCAL_APPS = [
@@ -170,3 +171,22 @@ DATABASES['default']['OPTIONS'] = {
     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
     'charset': 'utf8mb4',
 }
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_TIMEZONE = 'Africa/Nairobi'
+
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'send-fee-reminders': {
+        'task': 'notifications.tasks.send_fee_reminders',
+        'schedule': crontab(day_of_month='1,15', hour=9, minute=0),  # 1st and 15th at 9am
+    },
+}
+# Change this:
+# CELERY_IMPORTS = ('school.celery',)
+
+# To this:
+CELERY_IMPORTS = ('school.celery_app',)
